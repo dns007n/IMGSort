@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.26020.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMGSort", "IMGSort\IMGSort.csproj", "{28A66E58-84BE-4342-B16B-B7B0A64873F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMGSortLib", "IMGSortLib\IMGSortLib.csproj", "{976D3A8B-93F4-46E0-A711-F796AB363674}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMGSortLib.Tests", "IMGSortLib.Tests\IMGSortLib.Tests.csproj", "{4AA06CA9-E261-4ACA-8CE8-32391186B101}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{28A66E58-84BE-4342-B16B-B7B0A64873F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28A66E58-84BE-4342-B16B-B7B0A64873F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28A66E58-84BE-4342-B16B-B7B0A64873F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{976D3A8B-93F4-46E0-A711-F796AB363674}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{976D3A8B-93F4-46E0-A711-F796AB363674}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{976D3A8B-93F4-46E0-A711-F796AB363674}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{976D3A8B-93F4-46E0-A711-F796AB363674}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AA06CA9-E261-4ACA-8CE8-32391186B101}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AA06CA9-E261-4ACA-8CE8-32391186B101}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AA06CA9-E261-4ACA-8CE8-32391186B101}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AA06CA9-E261-4ACA-8CE8-32391186B101}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
