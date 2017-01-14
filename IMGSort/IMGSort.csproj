@@ -110,5 +110,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IMGSortLib\IMGSortLib.csproj">
+      <Project>{976d3a8b-93f4-46e0-a711-f796ab363674}</Project>
+      <Name>IMGSortLib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
