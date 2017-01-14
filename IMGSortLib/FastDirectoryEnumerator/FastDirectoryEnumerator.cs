@@ -5,6 +5,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using Microsoft.Win32.SafeHandles;
+using IMGSortLib.Interfaces;
 
 namespace FastDirectoryEnumerator
 {
@@ -13,7 +14,7 @@ namespace FastDirectoryEnumerator
     /// <see cref="FastDirectoryEnumerator"/> class.
     /// </summary>
     [Serializable]
-    public class FileData
+    public class FileData:IFileData
     {
         /// <summary>
         /// Attributes of the file.
@@ -50,7 +51,15 @@ namespace FastDirectoryEnumerator
         {
             get { return this.LastWriteTimeUtc.ToLocalTime(); }
         }
-        
+
+        FileAttributes IFileData.Attributes => this.Attributes;
+        public DateTime LastAccessTime => this.LastAccessTime;
+        long IFileData.Size => this.Size;
+
+        string IFileData.Name => this.Name;
+
+        string IFileData.Path => this.Path;
+
         /// <summary>
         /// File last write time in UTC
         /// </summary>

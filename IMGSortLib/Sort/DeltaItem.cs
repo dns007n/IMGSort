@@ -1,4 +1,5 @@
 ﻿using FastDirectoryEnumerator;
+using IMGSortLib.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,9 @@ namespace IMGSortLib.Sort
 {
     class DeltaItem
     {
-        public FileData SourceFile { get; set; }
+        public int ID { get; set; }
+        public IFileData SourceFile { get; set; }
         public string TargetPath { get; set; }
         public string TargetFileName { get; set; }
-        
     }
 }

@@ -10,9 +10,9 @@ namespace IMGSortLib.Sort
 {
     class SortLogic
     {
-        private string _path;
+        internal string _path;
         public static SortLogic Current { get; set; }
-        private List<DeltaItem> _fileItems;
+        internal List<DeltaItem> _fileItems;
         public IEnumerable<DeltaItem> FileItems { get; }
         public string TargetPath { get; set; }
 
@@ -24,9 +24,11 @@ namespace IMGSortLib.Sort
         public void GetSourceFiles()
         {
             _fileItems = new List<DeltaItem>();
+            int idCounter = 0;
             foreach (FileData item in FastDirectoryEnumerator.FastDirectoryEnumerator.EnumerateFiles(_path, "*", SearchOption.AllDirectories))
             {
-                _fileItems.Add(new DeltaItem() { SourceFile = item });
+                idCounter++;
+                _fileItems.Add(new DeltaItem() { ID=idCounter, SourceFile = item });
             }
         }
         public void CalcTarget()
@@ -42,8 +44,12 @@ namespace IMGSortLib.Sort
                                                      lwt.Hour,
                                                      lwt.Minute,
                                                      lwt.Second);
-                
             }
+        }
+
+        public void RemoveDuplicates()
+        {
+            var duplicates = _fileItems.GroupBy(s => s.TargetFileName).SelectMany(grp => grp.Skip(1)).ToArray();
         }
     }
 }
