@@ -18,11 +18,13 @@
         <TextBox Name="TBSourcePath" 
                  Margin="0,0,5,0"
                  Grid.Row="0" 
-                 Grid.Column="0"/>
+                 Grid.Column="0"
+                 Text="{Binding Path=SourcePath}"/>
         <TextBox Name="TBTargePath" 
                  Margin="0,5,5,0"
                  Grid.Row="1"
-                 Grid.Column="0"/>
+                 Grid.Column="0"
+                 Text="{Binding TargetPath}"/>
         <Button Name="BSourceSelect" 
                 Grid.Row="0"
                 Grid.Column="1"
@@ -32,7 +34,15 @@
                 Grid.Row="1"
                 Grid.Column="1"
                 Content="..."/>
+        <Button Name="BStart"
+                Margin="5,5"
+                Grid.Column="0"
+                Grid.Row="2"
+                Content="Start"
+                Width="140"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Command="{Binding StartCommand}"/>
 
-        
     </Grid>
 </Window>

@@ -10,16 +10,36 @@ namespace IMGSortLib.Tests
     public class SortLogicTests
     {
         [TestMethod]
-        public void RemoveDuplicatesWithDuplicates()
+        public void RemoveDuplicates_Duplicates_1Item()
         {
-            var logic = new SortLogic("X:\\Test");
+            var logic = new SortLogic();
+            logic.SourcePath = "X:\\Test";
             logic._fileItems = new List<DeltaItem>()
             {
                 new DeltaItem() {SourceFile=new FileDataDummy("Bild01.jpg","X:\\Bilder\\",new DateTime(2016,10,01),DateTime.Now)},
-                new DeltaItem() {SourceFile=new FileDataDummy("Bild01.jpg","X:\\Bilder\\Duble\\",new DateTime(2016,10,01),DateTime.Now)}
+                new DeltaItem() {SourceFile=new FileDataDummy("Bild01.jpg","X:\\Bilder\\Duble\\",new DateTime(2016,10,01),DateTime.Now)},
             };
             logic.CalcTarget();
             logic.RemoveDuplicates();
+            Assert.AreEqual(1, logic._fileItems.Count);
         }
+        [TestMethod]
+        public void RemoveDuplicates_DuplicatesAndHash_3Items()
+        {
+            var logic = new SortLogic();
+            logic.SourcePath = "X:\\Test";
+            logic._fileItems = new List<DeltaItem>()
+            {
+                new DeltaItem() {SourceFile=new FileDataDummy("Bild01.jpg","X:\\Bilder\\",new DateTime(2016,10,01),DateTime.Now)},
+                new DeltaItem() {SourceFile=new FileDataDummy("Bild01.jpg","X:\\Bilder\\Duble\\",new DateTime(2016,10,01),DateTime.Now)},
+                new DeltaItem() {SourceFile=new FileDataDummy("Bild02.jpg","X:\\Bilder\\",new DateTime(2016,10,01),DateTime.Now), FileHash = "12345"},
+                new DeltaItem() {SourceFile=new FileDataDummy("Bild02.jpg","X:\\Bilder\\Duble\\",new DateTime(2016,10,01),DateTime.Now), FileHash = "12345"},
+                new DeltaItem() {SourceFile=new FileDataDummy("Bild02.jpg","X:\\Bilder\\Duble\\",new DateTime(2016,10,01),DateTime.Now), FileHash = "145"}
+            };
+            logic.CalcTarget();
+            logic.RemoveDuplicates();
+            Assert.AreEqual(3, logic._fileItems.Count);
+        }
+
     }
 }

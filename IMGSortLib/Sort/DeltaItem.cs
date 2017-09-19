@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 
 namespace IMGSortLib.Sort
 {
-    class DeltaItem
+    internal class DeltaItem
     {
         public int ID { get; set; }
         public IFileData SourceFile { get; set; }
+        public string FileHash { get; set; }
         public string TargetPath { get; set; }
         public string TargetFileName { get; set; }
     }
