@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace IMGSortLib.Sort
 {
-    internal class DeltaItem
+    public class DeltaItem
     {
         public int ID { get; set; }
         public IFileData SourceFile { get; set; }

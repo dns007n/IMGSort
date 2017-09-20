@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IMGSortLib.Interfaces
 {
-    interface IFileData
+    public interface IFileData
     {
         FileAttributes Attributes { get; }
         DateTime CreationTime { get; }

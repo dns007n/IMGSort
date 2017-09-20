@@ -34,15 +34,28 @@
                 Grid.Row="1"
                 Grid.Column="1"
                 Content="..."/>
-        <Button Name="BStart"
-                Margin="5,5"
-                Grid.Column="0"
-                Grid.Row="2"
+        <StackPanel Grid.Column="1"
+                    Grid.Row="2">
+            <Button Name="BStart"
+                Margin="0,5"
                 Content="Start"
-                Width="140"
-                HorizontalAlignment="Center"
                 VerticalAlignment="Top"
                 Command="{Binding StartCommand}"/>
+            <TextBlock Text="{Binding DuplicateCount}"/>
+            <TextBlock Text="{Binding ItemCount}"/>
+        </StackPanel>
+        <ListView Grid.Column="0"
+                  Grid.Row="2"
+                  ItemsSource="{Binding TargetList}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding TargetPath}"/>
+                        <TextBlock Text="{Binding TargetFileName}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
 
     </Grid>
 </Window>

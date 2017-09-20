@@ -14,11 +14,11 @@ namespace IMGSortLib.Sort
     {
         public static SortLogic Current { get; set; }
         internal List<DeltaItem> _fileItems;
-        internal IEnumerable<DeltaItem> FileItems { get; }
+        public IEnumerable<DeltaItem> FileItems { get { return _fileItems; } }
         public string SourcePath { get; set; }
         public string TargetPath { get; set; }
-
-
+        private int _Duplicates;
+        public int Duplicates { get { return _Duplicates; } }
         public void GetSourceFiles()
         {
             _fileItems = new List<DeltaItem>();
@@ -49,7 +49,7 @@ namespace IMGSortLib.Sort
                                                   lwt.Day.ToString("00"));
                 string[] split = item.SourceFile.Name.Split('.');
                 string fileEnding = split.Count() > 1 ? split[split.Count()-1] : string.Empty;
-                item.TargetFileName = String.Format(@"IMG {0}-{1}-{2}.{3}",
+                item.TargetFileName = String.Format(@"IMG_{0}{1}{2}.{3}",
                                                      lwt.Hour.ToString("00"),
                                                      lwt.Minute.ToString("00"),
                                                      lwt.Second.ToString("00"),
@@ -60,6 +60,7 @@ namespace IMGSortLib.Sort
         public void RemoveDuplicates()
         {
             DeltaItem[] duplicates = _fileItems.GroupBy(s => s.FileHash).SelectMany(grp => grp.Skip(1)).ToArray();
+            _Duplicates = duplicates.Count();
             foreach (DeltaItem item in duplicates)
             {
                 _fileItems.Remove(item);
