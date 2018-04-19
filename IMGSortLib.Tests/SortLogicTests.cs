@@ -13,7 +13,7 @@ namespace IMGSortLib.Tests
         public void RemoveDuplicates_Duplicates_1Item()
         {
             var logic = new SortLogic();
-            logic.SourcePath = "X:\\Test";
+            logic.SourcePaths = new HashSet<string>() { "X:\\Test" };
             logic._fileItems = new List<DeltaItem>()
             {
                 new DeltaItem() {SourceFile=new FileDataDummy("Bild01.jpg","X:\\Bilder\\",new DateTime(2016,10,01),DateTime.Now)},
@@ -27,7 +27,7 @@ namespace IMGSortLib.Tests
         public void RemoveDuplicates_DuplicatesAndHash_3Items()
         {
             var logic = new SortLogic();
-            logic.SourcePath = "X:\\Test";
+            logic.SourcePaths = new HashSet<string>() { "X:\\Test" };
             logic._fileItems = new List<DeltaItem>()
             {
                 new DeltaItem() {SourceFile=new FileDataDummy("Bild01.jpg","X:\\Bilder\\",new DateTime(2016,10,01),DateTime.Now)},

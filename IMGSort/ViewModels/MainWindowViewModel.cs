@@ -4,23 +4,34 @@ using System.Windows.Input;
 using Prism.Commands;
 using System;
 using System.Collections.ObjectModel;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace IMGSort.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
+        #region BindingProperties
         private string _title = "Prism Unity Application";
         public string Title
         {
             get { return _title; }
             set { SetProperty(ref _title, value); }
         }
-        private string _SourcePath;
+        private ObservableCollection<string> _SourcePath;
 
-        public string SourcePath
+        public ObservableCollection<string> SourcePaths
         {
             get { return _SourcePath; }
             set { SetProperty(ref _SourcePath, value); }
+        }
+
+        private string _SelectedSourceItem;
+        public string SelectedSourceItem
+        {
+            get { return _SelectedSourceItem; }
+            set { SetProperty(ref _SelectedSourceItem, value); }
         }
         private string _TargetPath;
 
@@ -52,7 +63,12 @@ namespace IMGSort.ViewModels
             set { SetProperty(ref _TargetList, value); }
         }
 
+        #endregion
+
         public ICommand StartCommand { get; set; }
+        public ICommand SourceSelectCommand { get; set; }
+        public ICommand SourceRemoveCommand { get; set; }
+        public ICommand TargetSelectCommand { get; set; }
 
         private SortLogic _Logic;
 
@@ -60,21 +76,62 @@ namespace IMGSort.ViewModels
         {
             _Logic = new SortLogic();
             StartCommand = new DelegateCommand(() => Start());
+            SourceSelectCommand = new DelegateCommand(() => SelectSourcePath());
+            SourceRemoveCommand = new DelegateCommand(() => SelectRemovePath());
+            TargetSelectCommand = new DelegateCommand(() => SelectTargetPath());
+            if (Properties.Settings.Default.LastSourcePath == null)
+            {
+                Properties.Settings.Default.LastSourcePath = new System.Collections.Specialized.StringCollection();
+            }
+            SourcePaths = new ObservableCollection<string>(Properties.Settings.Default.LastSourcePath.Cast<string>());
+            TargetPath = Properties.Settings.Default.LastTargetPath;
         }
 
-        internal void Start()
+        private void SelectRemovePath()
         {
-            _Logic.SourcePath = SourcePath;
+            SourcePaths.Remove(SelectedSourceItem);
+            Properties.Settings.Default.LastSourcePath.Remove(SelectedSourceItem);
+            Properties.Settings.Default.Save();
+        }
+
+        private void SelectSourcePath()
+        {
+            var dialog = new CommonOpenFileDialog();
+            dialog.InitialDirectory = SourcePaths.LastOrDefault();
+            dialog.IsFolderPicker = true;
+            CommonFileDialogResult result = dialog.ShowDialog();
+            if (result == CommonFileDialogResult.Ok && !SourcePaths.Contains(dialog.FileName))
+            {
+                SourcePaths.Add(dialog.FileName);
+                Properties.Settings.Default.LastSourcePath.Add(dialog.FileName);
+                Properties.Settings.Default.Save();
+            }
+        }
+        private void SelectTargetPath()
+        {
+            var dialog = new CommonOpenFileDialog();
+            dialog.InitialDirectory = TargetPath;
+            dialog.IsFolderPicker = true;
+            CommonFileDialogResult result = dialog.ShowDialog();
+            if (result == CommonFileDialogResult.Ok)
+            {
+                TargetPath = dialog.FileName;
+                Properties.Settings.Default.LastTargetPath = TargetPath;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        internal async void Start()
+        {
+            _Logic.SourcePaths = SourcePaths;
             _Logic.TargetPath = TargetPath;
-            _Logic.SourcePath = @"D:\Test";
-            _Logic.TargetPath = @"C:\TestX";
-            _Logic.GetSourceFiles();
-            _Logic.CalcTarget();
-            _Logic.RemoveDuplicates();
+            await _Logic.GetSourceFilesAsync();
+            await _Logic.CalcTargetAsync();
+            await _Logic.RemoveDuplicatesAsync();
             TargetList = new ObservableCollection<DeltaItem>(_Logic.FileItems);
             DuplicateCount = _Logic.Duplicates;
             ItemCount = TargetList.Count;
-            //_Logic.CopyFilesToTarget();
+            //await _Logic.CopyFilesToTargetAsync();
         }
     }
 }
