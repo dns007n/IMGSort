@@ -4,23 +4,25 @@
         xmlns:prism="http://prismlibrary.com/"
         xmlns:l="clr-namespace:IMGSort.Converter"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        Title="{Binding Title}" Height="350" Width="525">
+        Title="{Binding Title}" Height="720" Width="640">
     <Window.Resources>
         <l:ImageConverter x:Key="IMGConv"/>
     </Window.Resources>
     <Grid Margin="5,5">
         <!--<ContentControl prism:RegionManager.RegionName="ContentRegion" />-->
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="9*"/>
+            <ColumnDefinition Width="5*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <ListView Grid.Row="0"
                   Grid.Column="0"
+                  Margin="0,0,5,0"
                   ItemsSource="{Binding SourcePaths}"
                   SelectedItem="{Binding SelectedSourceItem}">
             <!--<ListView.ItemTemplate>
@@ -37,6 +39,9 @@
                     Command="{Binding SourceSelectCommand}"/>
             <Button Content="-"
                     Command="{Binding SourceRemoveCommand}"/>
+            <Button Content="Alle entfernen"
+                    Margin="0,5,0,0"
+                    Command="{Binding SourceRemoveAllCommand}"/>
         </StackPanel>
         <TextBox Name="TBTargePath" 
                  Margin="0,5,5,0"
@@ -51,16 +56,22 @@
                 Command="{Binding TargetSelectCommand}"/>
         <StackPanel Grid.Column="1"
                     Grid.Row="2">
-            <Button Name="BStart"
-                Margin="0,5"
-                Content="Start"
+            <Button Name="BSearch"
+                Margin="0,5,0,0"
+                Content="Suchen"
                 VerticalAlignment="Top"
-                Command="{Binding StartCommand}"/>
+                Command="{Binding SearchCommand}"/>
+            <Button Name="BCopy"
+                Margin="0,5,0,0"
+                Content="Kopieren"
+                VerticalAlignment="Top"
+                Command="{Binding CopyCommand}"/>
             <TextBlock Text="{Binding DuplicateCount}"/>
             <TextBlock Text="{Binding ItemCount}"/>
         </StackPanel>
         <ListView Grid.Column="0"
                   Grid.Row="2"
+                  Margin="0,5,5,0"
                   ItemsSource="{Binding TargetList}">
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -69,17 +80,24 @@
                             <ColumnDefinition Width="200"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Image Source="{Binding FullName, Converter={StaticResource IMGConv}}" 
+                        <Image Source="{Binding SourceFullPath, Converter={StaticResource IMGConv}}" 
                                Grid.Column="0"
                                Height="160"/>
                         <StackPanel Grid.Column="1">
-                            <TextBlock Text="{Binding TargetPath}"/>
-                            <TextBlock Text="{Binding TargetFileName}"/>
+                            <TextBlock Text="{Binding SourceFullPath}"/>
+                            <TextBlock Text="{Binding TargetFullPath}"/>
                         </StackPanel>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <ProgressBar Grid.Column="0"
+                     Grid.ColumnSpan="2"
+                     Grid.Row="3"
+                     Height="4"
+                     IsEnabled="{Binding PBEnabled}"
+                     IsIndeterminate="{Binding PBIndeterminateEnabled}"
+                     />
 
     </Grid>
 </Window>

@@ -1,11 +1,5 @@
-﻿using FastDirectoryEnumerator;
-using IMGSortLib.Interfaces;
-using System;
-using System.Collections.Generic;
+﻿using IMGSortLib.Interfaces;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IMGSortLib.Sort
 {
@@ -17,7 +11,8 @@ namespace IMGSortLib.Sort
         public string FileHash { get; set; }
         public string TargetPath { get; set; }
         public string TargetFileName { get; set; }
-        public string FullName => SourceFile.Path;
+        public string SourceFullPath => SourceFile?.Path;
+        public string TargetFullPath => TargetPath != null && TargetFileName != null ? Path.Combine(TargetPath, TargetFileName) : null;
     }
 
 }

@@ -1,11 +1,9 @@
-﻿using FastDirectoryEnumerator;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace IMGSortLib.Sort
@@ -60,6 +58,7 @@ namespace IMGSortLib.Sort
 
             }
         }
+
         internal void CalcTarget()
         {
             foreach (DeltaItem item in _fileItems)
@@ -72,7 +71,7 @@ namespace IMGSortLib.Sort
                                                   lwt.Day.ToString("00"));
                 string[] split = item.SourceFile.Name.Split('.');
                 string fileEnding = split.Count() > 1 ? split[split.Count() - 1] : string.Empty;
-                item.TargetFileName = String.Format(@"IMG_{0}{1}{2}.{3}",
+                item.TargetFileName = String.Format(@"IMG_{0}{1}{2}-00.{3}",
                                                      lwt.Hour.ToString("00"),
                                                      lwt.Minute.ToString("00"),
                                                      lwt.Second.ToString("00"),
@@ -88,6 +87,16 @@ namespace IMGSortLib.Sort
             {
                 _fileItems.Remove(item);
 
+            }
+            var xTimesItems = _fileItems.GroupBy(x => x.TargetFullPath).Where(x => x.Count() > 1);
+            foreach (var grouping in xTimesItems)
+            {
+                int counter = 0;
+                foreach (var item in grouping)
+                {
+                    item.TargetFileName = item.TargetFileName.Replace("-00", "-" + counter.ToString("00"));
+                    counter++;
+                }
             }
         }
 

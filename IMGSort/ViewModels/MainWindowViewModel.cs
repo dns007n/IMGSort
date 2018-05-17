@@ -1,19 +1,17 @@
-﻿using Prism.Mvvm;
-using IMGSortLib.Sort;
-using System.Windows.Input;
-using Prism.Commands;
-using System;
-using System.Collections.ObjectModel;
+﻿using IMGSortLib.Sort;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using System.Collections.Generic;
+using Prism.Commands;
+using Prism.Mvvm;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Input;
 
 namespace IMGSort.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
         #region BindingProperties
-        private string _title = "Prism Unity Application";
+        private string _title = "Bilder Sortierer";
         public string Title
         {
             get { return _title; }
@@ -63,28 +61,51 @@ namespace IMGSort.ViewModels
             set { SetProperty(ref _TargetList, value); }
         }
 
+        private bool _PBEnabled;
+        public bool PBEnabled
+        {
+            get { return _PBEnabled; }
+            set { SetProperty(ref _PBEnabled, value); }
+        }
+        private bool _PBIndeterminateEnabled;
+        public bool PBIndeterminateEnabled
+        {
+            get { return _PBIndeterminateEnabled; }
+            set { SetProperty(ref _PBIndeterminateEnabled, value); }
+        }
+
         #endregion
 
-        public ICommand StartCommand { get; set; }
+        public ICommand SearchCommand { get; set; }
+        public ICommand CopyCommand { get; set; }
         public ICommand SourceSelectCommand { get; set; }
         public ICommand SourceRemoveCommand { get; set; }
         public ICommand TargetSelectCommand { get; set; }
-
+        public ICommand SourceRemoveAllCommand { get; set; }
         private SortLogic _Logic;
 
         public MainWindowViewModel()
         {
             _Logic = new SortLogic();
-            StartCommand = new DelegateCommand(() => Start());
+            SearchCommand = new DelegateCommand(() => Search());
+            CopyCommand = new DelegateCommand(() => CopyContentAsync());
             SourceSelectCommand = new DelegateCommand(() => SelectSourcePath());
             SourceRemoveCommand = new DelegateCommand(() => SelectRemovePath());
             TargetSelectCommand = new DelegateCommand(() => SelectTargetPath());
+            SourceRemoveAllCommand = new DelegateCommand(() => SelectRemoveAllPaths());
             if (Properties.Settings.Default.LastSourcePath == null)
             {
                 Properties.Settings.Default.LastSourcePath = new System.Collections.Specialized.StringCollection();
             }
             SourcePaths = new ObservableCollection<string>(Properties.Settings.Default.LastSourcePath.Cast<string>());
             TargetPath = Properties.Settings.Default.LastTargetPath;
+        }
+
+        private void SelectRemoveAllPaths()
+        {
+            SourcePaths.Clear();
+            Properties.Settings.Default.LastSourcePath.Clear();
+            Properties.Settings.Default.Save();
         }
 
         private void SelectRemovePath()
@@ -121,17 +142,30 @@ namespace IMGSort.ViewModels
             }
         }
 
-        internal async void Start()
+        internal async void Search()
         {
+            PBEnabled = true;
+            PBIndeterminateEnabled = true;
             _Logic.SourcePaths = SourcePaths;
             _Logic.TargetPath = TargetPath;
             await _Logic.GetSourceFilesAsync();
             await _Logic.CalcTargetAsync();
             await _Logic.RemoveDuplicatesAsync();
-            TargetList = new ObservableCollection<DeltaItem>(_Logic.FileItems);
+            TargetList = new ObservableCollection<DeltaItem>(_Logic.FileItems.OrderBy(x => x.SourceFile.CreationTime));
             DuplicateCount = _Logic.Duplicates;
             ItemCount = TargetList.Count;
-            //await _Logic.CopyFilesToTargetAsync();
+            PBIndeterminateEnabled = false;
+            PBEnabled = false;
         }
+
+        private async void CopyContentAsync()
+        {
+            PBEnabled = true;
+            PBIndeterminateEnabled = true;
+            await _Logic.CopyFilesToTargetAsync();
+            PBIndeterminateEnabled = false;
+            PBEnabled = false;
+        }
+
     }
 }
