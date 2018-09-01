@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace IMGSortLib.Sort
@@ -42,7 +45,7 @@ namespace IMGSortLib.Sort
 
             foreach (string sourcePath in SourcePaths)
             {
-                Parallel.ForEach(FastDirectoryEnumerator.FastDirectoryEnumerator.EnumerateFiles(sourcePath, "*", SearchOption.AllDirectories), item =>
+                Parallel.ForEach(FastDirectoryEnumerator.FastDirectoryEnumerator.EnumerateFiles(sourcePath, "*.jpg", SearchOption.AllDirectories), item =>
                 {
                     idCounter++;
                     string fileHash;
@@ -64,14 +67,28 @@ namespace IMGSortLib.Sort
             foreach (DeltaItem item in _fileItems)
             {
                 DateTime lwt = item.SourceFile.LastWriteTime;
+                DateTime imageTaken;
+                try
+                {
+                    lwt = GetDateTakenFromImage(item.SourceFullPath);
+
+                }
+                catch (Exception ex)
+                {
+
+
+                }
                 item.TargetPath = string.Format(@"{0}\{1}\{2}\{1}-{2}-{3}",
-                                                  TargetPath,
-                                                  lwt.Year,
-                                                  lwt.Month.ToString("00"),
-                                                  lwt.Day.ToString("00"));
+                                 TargetPath,
+                                 lwt.Year,
+                                 lwt.Month.ToString("00"),
+                                 lwt.Day.ToString("00"));
                 string[] split = item.SourceFile.Name.Split('.');
                 string fileEnding = split.Count() > 1 ? split[split.Count() - 1] : string.Empty;
-                item.TargetFileName = String.Format(@"IMG_{0}{1}{2}-00.{3}",
+                item.TargetFileName = string.Format(@"IMG_{0}{1}{2}_{3}{4}{5}-00.{6}",
+                                                     lwt.Year,
+                                                     lwt.Month.ToString("00"),
+                                                     lwt.Day.ToString("00"),
                                                      lwt.Hour.ToString("00"),
                                                      lwt.Minute.ToString("00"),
                                                      lwt.Second.ToString("00"),
@@ -117,6 +134,21 @@ namespace IMGSortLib.Sort
                 {
                     //TODO Log
                 }
+            }
+        }
+        //we init this once so that if the function is repeatedly called
+        //it isn't stressing the garbage man
+        private static Regex r = new Regex(":");
+
+        //retrieves the datetime WITHOUT loading the whole image
+        public static DateTime GetDateTakenFromImage(string path)
+        {
+            using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
+            using (Image myImage = Image.FromStream(fs, false, false))
+            {
+                PropertyItem propItem = myImage.GetPropertyItem(36867);
+                string dateTaken = r.Replace(Encoding.UTF8.GetString(propItem.Value), "-", 2);
+                return DateTime.Parse(dateTaken);
             }
         }
     }
